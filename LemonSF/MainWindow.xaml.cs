@@ -85,19 +85,21 @@ namespace LemonSF
             }));
         }
 
-        private void Border_MouseDown_2(object sender, MouseButtonEventArgs e)
+        private async void Border_MouseDown_2(object sender, MouseButtonEventArgs e)
         {
             if (sendpath != "")
             {
                 try
                 {
-                    var info = new FileInfo(sendpath);
-                    var name= Encoding.Default.GetBytes(info.Name);
-                    var data = File.ReadAllBytes(sendpath);
-                    var lenght = Encoding.Default.GetBytes(data.Length.ToString());
-                    client.Send(name, name.Length, SocketFlags.None);
-                    client.Send(lenght, lenght.Length, SocketFlags.None);
-                    client.Send(data, data.Length, SocketFlags.None);
+                    await Task.Run(new Action(delegate {
+                        var info = new FileInfo(sendpath);
+                        var name = Encoding.Default.GetBytes(info.Name);
+                        var data = File.ReadAllBytes(sendpath);
+                        var lenght = Encoding.Default.GetBytes(data.Length.ToString());
+                        client.Send(name, name.Length, SocketFlags.None);
+                        client.Send(lenght, lenght.Length, SocketFlags.None);
+                        client.Send(data, data.Length, SocketFlags.None);
+                    }));
                     tbf.Text = "发送成功";
                 }
                 catch { tbf.Text = "发送失败"; }
